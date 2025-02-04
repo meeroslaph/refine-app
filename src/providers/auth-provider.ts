@@ -1,6 +1,16 @@
 import { AuthProvider } from "@refinedev/core";
 
 export const authProvider: AuthProvider = {
+  onError: async (error) => {
+    if (error?.status === 401) {
+      return {
+        logout: true,
+        error: { message: "Unauthorized" },
+      };
+    }
+
+    return {};
+  },
   getIdentity: async () => {
     const response = await fetch("https://api.fake-rest.refine.dev/auth/me", {
       headers: {
@@ -46,9 +56,6 @@ export const authProvider: AuthProvider = {
     const token = localStorage.getItem("my_access_token");
 
     return { authenticated: Boolean(token) };
-  },
-  onError: async (error) => {
-    throw new Error("Not implemented");
   },
   // optional methods
   register: async (params) => {
