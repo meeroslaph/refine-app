@@ -3,7 +3,7 @@ import routerProvider, { NavigateToResource } from "@refinedev/react-router";
 
 import { BrowserRouter, Routes, Route, Outlet } from "react-router";
 
-import { RefineThemes, ThemedLayoutV2 } from "@refinedev/mui";
+import { RefineThemes, ThemedLayoutV2, ThemedTitleV2 } from "@refinedev/mui";
 
 import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
@@ -47,7 +47,11 @@ export default function App(): JSX.Element {
                   key="authenticated-routes"
                   redirectOnFail="/login"
                 >
-                  <ThemedLayoutV2>
+                  <ThemedLayoutV2
+                    Title={(props) => (
+                      <ThemedTitleV2 {...props} text="Awesome Project" />
+                    )}
+                  >
                     <Outlet />
                   </ThemedLayoutV2>
                 </Authenticated>
