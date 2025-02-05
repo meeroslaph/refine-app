@@ -29,7 +29,7 @@ import { Login } from "./pages/login";
 
 export default function App(): JSX.Element {
   return (
-    <BrowserRouter>
+    (<BrowserRouter>
       <ThemeProvider theme={RefineThemes.Blue}>
         <CssBaseline />
         <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
@@ -39,21 +39,24 @@ export default function App(): JSX.Element {
             authProvider={authProvider}
             routerProvider={routerProvider}
             notificationProvider={useNotificationProvider}
-            resources={[
-              {
-                name: "protected-products",
-                list: "/products",
-                show: "/products/:id",
-                edit: "/products/:id/edit",
-                create: "/products/create",
-                meta: { label: "Products" },
-              },
-              {
-                name: "categories",
-                list: "/categories",
-                meta: { label: "Categories" },
-              },
-            ]}
+            resources={[{
+              name: "protected-products",
+              list: "/products",
+              show: "/products/:id",
+              edit: "/products/:id/edit",
+              create: "/products/create",
+              meta: { label: "Products" },
+            }, {
+              name: "categories",
+              list: "/categories",
+              meta: { label: "Categories" },
+            }, {
+              name: "events",
+              list: "/events",
+              create: "/events/create",
+              edit: "/events/edit/:id",
+              show: "/events/show/:id"
+            }]}
           >
             <Routes>
               <Route
@@ -85,6 +88,9 @@ export default function App(): JSX.Element {
                 <Route path="/categories">
                   <Route index element={<ListCategories />} />
                 </Route>
+                <Route path="/events">
+                  <Route index element={<ListCategories />} />
+                </Route>
               </Route>
               <Route
                 element={
@@ -99,6 +105,6 @@ export default function App(): JSX.Element {
           </Refine>
         </RefineSnackbarProvider>
       </ThemeProvider>
-    </BrowserRouter>
+    </BrowserRouter>)
   );
 }

@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "refine dev",
     "build": "refine build",
+    "start": "refine start",
+    "refine": "refine",
     "serve": "refine serve",
     "lint": "eslint .",
     "preview": "vite preview"
