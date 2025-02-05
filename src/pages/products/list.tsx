@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelect } from "@refinedev/core";
-import { useDataGrid, EditButton, ShowButton } from "@refinedev/mui";
+import { List, useDataGrid, EditButton, ShowButton } from "@refinedev/mui";
 
 import {
   DataGrid,
@@ -83,10 +83,9 @@ export const ListProducts = () => {
   );
 
   return (
-    <div>
-      <h1>Products</h1>
+    <List>
       <DataGrid {...dataGridProps} columns={columns}  />
-    </div>
+    </List>
   );
 };
 

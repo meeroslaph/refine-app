@@ -1,5 +1,5 @@
 import { useForm } from "@refinedev/react-hook-form";
-import { useAutocomplete, SaveButton } from "@refinedev/mui";
+import { Edit, useAutocomplete } from "@refinedev/mui";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -22,70 +22,73 @@ export const EditProduct = () => {
   });
 
   return (
-    <Box
-      component="form"
-      sx={{ display: "flex", flexDirection: "column", gap: "12px" }}
-      autoComplete="off"
-    >
-      <TextField
-        {...register("name")}
-        label="Name"
-        error={!!errors.name}
-        helperText={errors.name?.message}
-      />
-      <TextField
-        {...register("description")}
-        multiline
-        label="Description"
-        error={!!errors.description}
-        helperText={errors.description?.message}
-      />
-      <TextField
-        {...register("material")}
-        label="Material"
-        error={!!errors.material}
-        helperText={errors.material?.message}
-      />
-      <Controller
-        control={control}
-        name="category"
-        defaultValue={null}
-        render={({ field }) => (
-          <Autocomplete
-            id="category"
-            {...autocompleteProps}
-            {...field}
-            onChange={(_, value) => field.onChange(value)}
-            getOptionLabel={(item) => {
-              return (
-                autocompleteProps?.options?.find(
-                  (option) => option?.id == item?.id,
-                )?.title ?? ""
-              );
-            }}
-            isOptionEqualToValue={(option, value) => {
-              return value === undefined || option?.id == (value?.id ?? value);
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Category"
-                variant="outlined"
-                margin="normal"
-                error={!!errors.category}
-                helperText={errors.category?.message}
-              />
-            )}
-          />
-        )}
-      />
-      <TextField
-        {...register("price")}
-        label="Price"
-        error={!!errors.price}
-        helperText={errors.price?.message}
-      />
-      <SaveButton {...saveButtonProps} />
-    </Box>
+    <Edit saveButtonProps={saveButtonProps}>
+      <Box
+        component="form"
+        sx={{ display: "flex", flexDirection: "column", gap: "12px" }}
+        autoComplete="off"
+      >
+        <TextField
+          {...register("name")}
+          label="Name"
+          error={!!errors.name}
+          helperText={errors.name?.message}
+        />
+        <TextField
+          {...register("description")}
+          multiline
+          label="Description"
+          error={!!errors.description}
+          helperText={errors.description?.message}
+        />
+        <TextField
+          {...register("material")}
+          label="Material"
+          error={!!errors.material}
+          helperText={errors.material?.message}
+        />
+        <Controller
+          control={control}
+          name="category"
+          defaultValue={null}
+          render={({ field }) => (
+            <Autocomplete
+              id="category"
+              {...autocompleteProps}
+              {...field}
+              onChange={(_, value) => field.onChange(value)}
+              getOptionLabel={(item) => {
+                return (
+                  autocompleteProps?.options?.find(
+                    (option) => option?.id == item?.id,
+                  )?.title ?? ""
+                );
+              }}
+              isOptionEqualToValue={(option, value) => {
+                return (
+                  value === undefined || option?.id == (value?.id ?? value)
+                );
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Category"
+                  variant="outlined"
+                  margin="normal"
+                  error={!!errors.category}
+                  helperText={errors.category?.message}
+                />
+              )}
+            />
+          )}
+        />
+        <TextField
+          {...register("price")}
+          label="Price"
+          error={!!errors.price}
+          helperText={errors.price?.message}
+        />
+      </Box>
+    </Edit>
   );
 };
