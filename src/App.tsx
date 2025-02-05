@@ -23,6 +23,8 @@ import { EditProduct } from "./pages/products/edit";
 import { ListProducts } from "./pages/products/list";
 import { CreateProduct } from "./pages/products/create";
 
+import { ListCategories } from "./pages/categories/list";
+
 import { Login } from "./pages/login";
 
 export default function App(): JSX.Element {
@@ -45,6 +47,11 @@ export default function App(): JSX.Element {
                 edit: "/products/:id/edit",
                 create: "/products/create",
                 meta: { label: "Products" },
+              },
+              {
+                name: "categories",
+                list: "/categories",
+                meta: { label: "Categories" },
               },
             ]}
           >
@@ -74,6 +81,9 @@ export default function App(): JSX.Element {
                   <Route path=":id" element={<ShowProduct />} />
                   <Route path=":id/edit" element={<EditProduct />} />
                   <Route path="create" element={<CreateProduct />} />
+                </Route>
+                <Route path="/categories">
+                  <Route index element={<ListCategories />} />
                 </Route>
               </Route>
               <Route
