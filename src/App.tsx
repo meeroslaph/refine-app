@@ -3,7 +3,13 @@ import routerProvider, { NavigateToResource } from "@refinedev/react-router";
 
 import { BrowserRouter, Routes, Route, Outlet } from "react-router";
 
-import { RefineThemes, ThemedLayoutV2, ThemedTitleV2 } from "@refinedev/mui";
+import {
+  RefineThemes,
+  ThemedLayoutV2,
+  ThemedTitleV2,
+  RefineSnackbarProvider,
+  useNotificationProvider,
+} from "@refinedev/mui";
 
 import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
@@ -25,60 +31,63 @@ export default function App(): JSX.Element {
       <ThemeProvider theme={RefineThemes.Blue}>
         <CssBaseline />
         <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
-        <Refine
-          dataProvider={dataProvider}
-          authProvider={authProvider}
-          routerProvider={routerProvider}
-          resources={[
-            {
-              name: "protected-products",
-              list: "/products",
-              show: "/products/:id",
-              edit: "/products/:id/edit",
-              create: "/products/create",
-              meta: { label: "Products" },
-            },
-          ]}
-        >
-          <Routes>
-            <Route
-              element={
-                <Authenticated
-                  key="authenticated-routes"
-                  redirectOnFail="/login"
-                >
-                  <ThemedLayoutV2
-                    Title={(props) => (
-                      <ThemedTitleV2 {...props} text="Awesome Project" />
-                    )}
-                  >
-                    <Outlet />
-                  </ThemedLayoutV2>
-                </Authenticated>
-              }
-            >
+        <RefineSnackbarProvider>
+          <Refine
+            dataProvider={dataProvider}
+            authProvider={authProvider}
+            routerProvider={routerProvider}
+            notificationProvider={useNotificationProvider}
+            resources={[
+              {
+                name: "protected-products",
+                list: "/products",
+                show: "/products/:id",
+                edit: "/products/:id/edit",
+                create: "/products/create",
+                meta: { label: "Products" },
+              },
+            ]}
+          >
+            <Routes>
               <Route
-                index
-                element={<NavigateToResource resource="protected-products" />}
-              />
-              <Route path="/products">
-                <Route index element={<ListProducts />} />
-                <Route path=":id" element={<ShowProduct />} />
-                <Route path=":id/edit" element={<EditProduct />} />
-                <Route path="create" element={<CreateProduct />} />
+                element={
+                  <Authenticated
+                    key="authenticated-routes"
+                    redirectOnFail="/login"
+                  >
+                    <ThemedLayoutV2
+                      Title={(props) => (
+                        <ThemedTitleV2 {...props} text="Awesome Project" />
+                      )}
+                    >
+                      <Outlet />
+                    </ThemedLayoutV2>
+                  </Authenticated>
+                }
+              >
+                <Route
+                  index
+                  element={<NavigateToResource resource="protected-products" />}
+                />
+                <Route path="/products">
+                  <Route index element={<ListProducts />} />
+                  <Route path=":id" element={<ShowProduct />} />
+                  <Route path=":id/edit" element={<EditProduct />} />
+                  <Route path="create" element={<CreateProduct />} />
+                </Route>
               </Route>
-            </Route>
-            <Route
-              element={
-                <Authenticated key="auth-pages" fallback={<Outlet />}>
-                  <NavigateToResource resource="protected-products" />
-                </Authenticated>
-              }
-            >
-              <Route path="/login" element={<Login />} />
-            </Route>
-          </Routes>
-        </Refine>
+              <Route
+                element={
+                  <Authenticated key="auth-pages" fallback={<Outlet />}>
+                    <NavigateToResource resource="protected-products" />
+                  </Authenticated>
+                }
+              >
+                <Route path="/login" element={<Login />} />
+              </Route>
+            </Routes>
+          </Refine>
+        </RefineSnackbarProvider>
       </ThemeProvider>
     </BrowserRouter>
   );
