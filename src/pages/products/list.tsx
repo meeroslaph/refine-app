@@ -1,136 +1,104 @@
-import { useTable, useMany, useNavigation } from "@refinedev/core";
+import React from "react";
+import { useSelect } from "@refinedev/core";
+import { useDataGrid, EditButton, ShowButton } from "@refinedev/mui";
 
-import { Link } from "react-router";
+import {
+  DataGrid,
+  GridColDef,
+} from "@mui/x-data-grid";
 
 export const ListProducts = () => {
-  const {
-    tableQuery: { data, isLoading },
-    current,
-    setCurrent,
-    pageCount,
-    sorters,
-    setSorters,
-  } = useTable({
-    resource: "products",
-    pagination: { current: 1, pageSize: 10 },
+  const { dataGridProps } = useDataGrid<IProduct>({
     sorters: { initial: [{ field: "id", order: "asc" }] },
     syncWithLocation: true,
   });
 
-  // You can also use methods like show or list to trigger navigation.
-  // We're using url methods to provide more semantically correct html.
-  const { showUrl, editUrl } = useNavigation();
-
-  const { data: categories } = useMany({
+  const {
+    options: categories,
+    query: { isLoading },
+  } = useSelect<ICategory>({
     resource: "categories",
-    ids: data?.data?.map((product) => product.category?.id) ?? [],
+    pagination: false,
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const columns = React.useMemo<GridColDef<IProduct>[]>(
+    () => [
+      {
+        field: "id",
+        headerName: "ID",
+        type: "number",
+        width: 50,
+      },
+      {
+        field: "name",
+        headerName: "Name",
+        minWidth: 400,
+        flex: 1,
+      },
+      {
+        field: "category.id",
+        headerName: "Category",
+        minWidth: 250,
+        flex: 0.5,
+        type: "singleSelect",
+        valueOptions: categories,
+        display: "flex",
+        renderCell: function render({ row }) {
+          if (isLoading) {
+            return "Loading...";
+          }
 
-  const onPrevious = () => {
-    if (current > 1) {
-      setCurrent(current - 1);
-    }
-  };
-
-  const onNext = () => {
-    if (current < pageCount) {
-      setCurrent(current + 1);
-    }
-  };
-
-  const onPage = (page: number) => {
-    setCurrent(page);
-  };
-
-  const getSorter = (field: string) => {
-    const sorter = sorters?.find((sorter) => sorter.field === field);
-
-    if (sorter) {
-      return sorter.order;
-    }
-  };
-
-  const onSort = (field: string) => {
-    const sorter = getSorter(field);
-    setSorters(
-      sorter === "desc"
-        ? []
-        : [
-            {
-              field,
-              order: sorter === "asc" ? "desc" : "asc",
-            },
-          ],
-    );
-  };
-
-  const indicator = { asc: "⬆️", desc: "⬇️" };
+          return categories?.find(
+            (category) => category.value == row.category.id,
+          )?.label;
+        },
+      },
+      {
+        field: "material",
+        headerName: "Material",
+        minWidth: 120,
+        flex: 0.3,
+      },
+      {
+        field: "price",
+        headerName: "Price",
+        minWidth: 120,
+        flex: 0.3,
+      },
+      {
+        field: "actions",
+        headerName: "Actions",
+        display: "flex",
+        renderCell: function render({ row }) {
+          return (
+            <div>
+              <EditButton hideText recordItemId={row.id} />
+              <ShowButton hideText recordItemId={row.id} />
+            </div>
+          );
+        },
+      },
+    ],
+    [categories, isLoading],
+  );
 
   return (
     <div>
       <h1>Products</h1>
-      <table>
-        <thead>
-          <tr>
-            <th onClick={() => onSort("id")}>
-              ID {indicator[getSorter("id")]}
-            </th>
-            <th onClick={() => onSort("name")}>
-              Name {indicator[getSorter("name")]}
-            </th>
-            <th>Category</th>
-            <th onClick={() => onSort("material")}>
-              Material {indicator[getSorter("material")]}
-            </th>
-            <th onClick={() => onSort("price")}>
-              Price {indicator[getSorter("price")]}
-            </th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data?.data?.map((product) => (
-            <tr key={product.id}>
-              <td>{product.id}</td>
-              <td>{product.name}</td>
-              <td>
-                {
-                  categories?.data?.find(
-                    (category) => category.id == product.category?.id,
-                  )?.title
-                }
-              </td>
-              <td>{product.material}</td>
-              <td>{product.price}</td>
-              <td>
-                <Link to={showUrl("protected-products", product.id)}>Show</Link>
-                <Link to={editUrl("protected-products", product.id)}>Edit</Link>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="pagination">
-        <button type="button" onClick={onPrevious}>
-          {"<"}
-        </button>
-        <div>
-          {current - 1 > 0 && (
-            <span onClick={() => onPage(current - 1)}>{current - 1}</span>
-          )}
-          <span className="current">{current}</span>
-          {current + 1 < pageCount && (
-            <span onClick={() => onPage(current + 1)}>{current + 1}</span>
-          )}
-        </div>
-        <button type="button" onClick={onNext}>
-          {">"}
-        </button>
-      </div>
+      <DataGrid {...dataGridProps} columns={columns}  />
     </div>
   );
 };
+
+interface IProduct {
+  id: number;
+  name: string;
+  material: string;
+  price: string;
+  category: ICategory;
+}
+
+interface ICategory {
+  id: number;
+  title: string;
+}
